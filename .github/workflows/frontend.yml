@@ -1,4 +1,4 @@
-name: Deploy Frontend
+name: Windows Frontend CI/CD
 
 on:
   push:
@@ -8,23 +8,32 @@ on:
       - "frontend/**"
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
+  build_and_deploy:
+    runs-on: windows-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Install Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 18
 
       - name: Install dependencies
-        run: cd frontend && npm install
+        run: |
+          cd frontend
+          npm install
 
-      - name: Build project
-        run: cd frontend && npm run build
+      - name: Run tests (if applicable)
+        run: |
+          cd frontend
+          npm test
+
+      - name: Build frontend
+        run: |
+          cd frontend
+          npm run build
 
       - name: Deploy to Vercel
         uses: amondnet/vercel-action@v20
